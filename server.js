@@ -40,6 +40,7 @@ server.post('/api/projects', (req, res) => {
           .first()
         .then(project => {
           res.status(201).json({
+              message: "success",
               id: project.id, 
               name:project.name, 
               description: project.description, 
@@ -76,7 +77,7 @@ server.post('/api/resources', (req, res) => {
           .where({ id })
           .first()
         .then(resource => {
-            res.status(201).json(resource);
+            res.status(201).json({message: "success", resource});
         });
     })
     .catch(error => {
@@ -84,6 +85,43 @@ server.post('/api/resources', (req, res) => {
     });
 })
 
-server.post('/api/projects/tasks', (req,res) => )
+server.get('/api/projects/tasks', (req,res) => {
+    db("tasks as t")
+        .join('projects as p', 'p.id', 't.project_id')
+        .select('t.id', 'p.name',  't.description', 't.notes', 't.completed')
+
+    .then(tasks => {res.status(200).json(tasks.map(task => {
+        return {
+          id: task.id,
+          name: task.name,
+          description: task.description,
+          notes: task.notes,
+          completed: `${task.completed === 1 ? 'true' : 'false'}`
+        }
+    }))})
+    .catch(error => {
+        res.status(500).json(error);
+    });
+})
+
+server.post('/api/projects/tasks', (req,res) => {
+    if(!req.body){
+        return res.status(400).json({message: "You need to add a resource...."})
+    } else(
+        db('tasks').insert(req.body)
+    )
+    .then(ids => {
+        const id = ids[0];
+        db('tasks')
+          .where({ id })
+          .first()
+        .then(task => {
+            res.status(201).json({message: "success", task});
+        });
+    })
+    .catch(error => {
+        res.status(500).json(error);
+    });
+})
 
 module.exports = server;
