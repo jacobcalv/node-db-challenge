@@ -8,7 +8,7 @@ exports.up = function(knex) {
         tbl.string('name', 255)
             .notNullable();
 
-        tbl.string('description',255)
+        tbl.string('project_description',255)
 
         tbl.boolean('completed')
             .notNullable()

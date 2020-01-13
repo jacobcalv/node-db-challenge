@@ -16,7 +16,7 @@ server.get('/api/projects', (req,res) => {
             return {
               id: project.id,
               name: project.name,
-              description: project.description,
+              description: project.project_description,
               completed: `${project.completed === 1 ? 'true' : 'false'}`
             }
         }))
@@ -43,7 +43,7 @@ server.post('/api/projects', (req, res) => {
               message: "success",
               id: project.id, 
               name:project.name, 
-              description: project.description, 
+              description: project.project_description, 
               completed: `${project.completed === 1 ? 'true' : 'false'}`
             });
         });
@@ -88,12 +88,13 @@ server.post('/api/resources', (req, res) => {
 server.get('/api/projects/tasks', (req,res) => {
     db("tasks as t")
         .join('projects as p', 'p.id', 't.project_id')
-        .select('t.id', 'p.name',  't.description', 't.notes', 't.completed')
+        .select('t.id', 'p.name', 't.description', 't.notes', 't.completed')
 
     .then(tasks => {res.status(200).json(tasks.map(task => {
         return {
           id: task.id,
-          name: task.name,
+          project_name: task.name,
+        //   project_description: task.project_description,
           description: task.description,
           notes: task.notes,
           completed: `${task.completed === 1 ? 'true' : 'false'}`
